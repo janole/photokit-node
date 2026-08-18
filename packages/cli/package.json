@@ -1,0 +1,46 @@
+{
+  "name": "photokit-node",
+  "version": "0.1.0",
+  "description": "A macOS PhotoKit bridge with a typed Node.js API and CLI.",
+  "license": "MIT",
+  "author": "Jan Ole Suhr",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "bin": {
+    "photokit-node": "./dist/bin.js"
+  },
+  "files": [
+    "dist",
+    "LICENSE",
+    "README.md"
+  ],
+  "keywords": [
+    "apple-photos",
+    "macos",
+    "nodejs",
+    "photokit"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/janole/photokit-node.git"
+  },
+  "homepage": "https://github.com/janole/photokit-node",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "test": "vitest run --passWithNoTests",
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "pnpm -r build",
+    "prepack": "pnpm -r build"
+  },
+  "dependencies": {
+    "commander": "15.0.0"
+  },
+  "devDependencies": {
+    "@photokit-node/core": "workspace:*"
+  }
+}

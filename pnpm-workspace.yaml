@@ -1,0 +1,11 @@
+# Supply-chain hardening:
+# - minimumReleaseAge delays very new releases (minutes) to reduce zero-day blast radius.
+minimumReleaseAge: 5760
+# - minimumReleaseAgeExclude bypasses the cooldown for our own packages.
+minimumReleaseAgeExclude:
+  - "@photokit-node/*"
+# - savePrefix "" pins newly added dependencies exactly (no ^/~ drift).
+savePrefix: ""
+
+packages:
+  - "packages/*"
