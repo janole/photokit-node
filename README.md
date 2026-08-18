@@ -23,8 +23,15 @@ Requirements:
 ```bash
 pnpm install
 pnpm run ok
+pnpm run native:build
+pnpm run native:run -- authorization-status
 pnpm run native:test
 ```
+
+`native:build` creates a lightweight app bundle containing the required Photos
+privacy description and signs it with a stable local-development identity. See
+`native/photokit-helper/README.md` for authorization behavior and distribution
+signing.
 
 Run the TypeScript CLI directly during development:
 
@@ -34,8 +41,8 @@ pnpm dev -- protocol-version
 
 ## Status
 
-The repository currently provides the monorepo skeleton and protocol-version
-handshake. PhotoKit library access will be added behind the native helper.
+The native helper provides protocol-version and explicit Photos authorization
+status/request operations. Asset access will be added behind the same boundary.
 
 ## License
 

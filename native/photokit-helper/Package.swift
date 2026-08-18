@@ -1,6 +1,10 @@
 // swift-tools-version: 6.0
 
+import Foundation
 import PackageDescription
+
+let packageDirectory = URL(fileURLWithPath: #filePath).deletingLastPathComponent().path
+let helperInfoPlist = "\(packageDirectory)/Resources/PhotoKitHelper-Info.plist"
 
 let package = Package(
     name: "photokit-helper",
@@ -14,7 +18,15 @@ let package = Package(
         .target(name: "PhotoKitProtocol"),
         .executableTarget(
             name: "PhotoKitHelper",
-            dependencies: ["PhotoKitProtocol"]
+            dependencies: ["PhotoKitProtocol"],
+            linkerSettings: [
+                .unsafeFlags([
+                    "-Xlinker", "-sectcreate",
+                    "-Xlinker", "__TEXT",
+                    "-Xlinker", "__info_plist",
+                    "-Xlinker", helperInfoPlist,
+                ]),
+            ]
         ),
         .testTarget(
             name: "PhotoKitProtocolTests",

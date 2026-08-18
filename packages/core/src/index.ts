@@ -10,8 +10,10 @@ export interface HelperVersionResponse
     protocolVersion: number;
 }
 
-/** Response returned by the native helper's authorization-status command. */
+/** Response returned by the native helper's authorization commands. */
 export interface AuthorizationStatusResponse
 {
+    canRequest: boolean;
+    guidance: string;
     status: PhotoLibraryAuthorizationStatus;
 }
