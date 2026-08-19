@@ -33,6 +33,7 @@ const errorExitCodes: Readonly<Record<string, number>> = {
     "helper-not-executable": cliExitCodes.unavailable,
     "helper-not-found": cliExitCodes.unavailable,
     "helper-output-limit": cliExitCodes.software,
+    "helper-platform-unsupported": cliExitCodes.unavailable,
     "helper-timeout": cliExitCodes.temporaryFailure,
     "incompatible-protocol-version": cliExitCodes.versionMismatch,
     "invalid-native-response": cliExitCodes.software,

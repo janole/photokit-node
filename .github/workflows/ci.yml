@@ -36,7 +36,7 @@ jobs:
         run: pnpm qa
 
   native:
-    runs-on: macos-latest
+    runs-on: macos-15
     timeout-minutes: 20
     steps:
       - name: Checkout
@@ -44,5 +44,22 @@ jobs:
         with:
           persist-credentials: false
 
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Install dependencies (no lifecycle scripts)
+        run: pnpm install --frozen-lockfile --ignore-scripts
+
+      - name: Rebuild explicitly trusted native deps
+        run: pnpm rebuild esbuild
+
       - name: Test Swift helper
-        run: swift test --package-path native/photokit-helper
+        run: pnpm native:test
+
+      - name: Verify and smoke installed npm package
+        run: pnpm package:smoke

@@ -242,6 +242,15 @@ describe("photokit-node CLI", () =>
             },
             success: false,
         });
+
+        const unsupported = await execute(["assets", "list"], {
+            listAssets: vi.fn().mockRejectedValue(new PhotoKitError(
+                "helper-platform-unsupported",
+                "The packaged helper supports darwin-arm64.",
+            )),
+        });
+        expect(unsupported.exitCode).toBe(69);
+        expect(unsupported.stderr).toContain("helper-platform-unsupported");
     });
 
     it("uses the usage exit code for invalid Commander options", async () =>

@@ -6,6 +6,7 @@ export const clientErrorCodes = [
     "helper-not-executable",
     "helper-not-found",
     "helper-output-limit",
+    "helper-platform-unsupported",
     "helper-timeout",
     "output-cleanup-failed",
 ] as const;

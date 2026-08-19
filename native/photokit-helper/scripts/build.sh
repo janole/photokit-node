@@ -14,6 +14,7 @@ rm -rf "$app_path"
 mkdir -p "$app_path/Contents/MacOS"
 cp "$binary_directory/photokit-helper" "$helper_path"
 cp "$package_directory/Resources/PhotoKitHelper-Info.plist" "$app_path/Contents/Info.plist"
+plutil -replace CFBundleShortVersionString -string "${PHOTOKIT_HELPER_VERSION:-0.1.0}" "$app_path/Contents/Info.plist"
 
 if [ -n "${PHOTOKIT_CODE_SIGN_IDENTITY:-}" ]; then
     codesign --force --sign "$PHOTOKIT_CODE_SIGN_IDENTITY" --identifier "$signing_identifier" "$app_path"

@@ -15,6 +15,6 @@
     <key>CFBundleVersion</key>
     <string>1</string>
     <key>NSPhotoLibraryUsageDescription</key>
-    <string>PhotoKit Node reads photo and video metadata from your System Photo Library.</string>
+    <string>PhotoKit Node reads photo and video metadata and accesses image content from your System Photo Library.</string>
 </dict>
 </plist>

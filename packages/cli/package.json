@@ -12,6 +12,7 @@
   },
   "files": [
     "dist",
+    "native",
     "LICENSE",
     "README.md"
   ],
@@ -29,13 +30,19 @@
   "engines": {
     "node": ">=22"
   },
+  "os": [
+    "darwin"
+  ],
+  "cpu": [
+    "arm64"
+  ],
   "scripts": {
     "build": "tsup",
     "dev": "tsup --watch",
     "test": "vitest run --passWithNoTests",
     "typecheck": "tsc --noEmit",
-    "prepublishOnly": "pnpm -r build",
-    "prepack": "pnpm -r build"
+    "prepublishOnly": "pnpm --workspace-root run package:verify",
+    "prepack": "pnpm -r build && pnpm --workspace-root run native:package"
   },
   "dependencies": {
     "commander": "15.0.0"

@@ -11,3 +11,6 @@ coverage/
 # Swift Package Manager
 .build/
 .swiftpm/
+
+# Generated npm-native artifact
+packages/cli/native/

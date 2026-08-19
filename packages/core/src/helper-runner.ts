@@ -97,6 +97,22 @@ export class HelperOutputLimitError extends Error
     }
 }
 
+/** Raised when the packaged helper does not support the current runtime. */
+export class HelperPlatformUnsupportedError extends Error
+{
+    public readonly architecture: NodeJS.Architecture;
+    public readonly code = "helper-platform-unsupported";
+    public readonly platform: NodeJS.Platform;
+
+    public constructor(platform: NodeJS.Platform, architecture: NodeJS.Architecture)
+    {
+        super(`The packaged PhotoKit helper supports darwin-arm64, not ${platform}-${architecture}.`);
+        this.name = "HelperPlatformUnsupportedError";
+        this.architecture = architecture;
+        this.platform = platform;
+    }
+}
+
 /** Raised when the native helper exits without a valid protocol response. */
 export class HelperCrashedError extends Error
 {
@@ -128,6 +144,18 @@ export class HelperCrashedError extends Error
 export function resolveHelperPath(helperPath?: string): string
 {
     return helperPath ?? fileURLToPath(new URL("../native/photokit-helper", import.meta.url));
+}
+
+/** Rejects a default packaged-helper invocation on unsupported operating systems or architectures. */
+export function assertSupportedHelperRuntime(
+    platform: NodeJS.Platform = process.platform,
+    architecture: NodeJS.Architecture = process.arch,
+): void
+{
+    if (platform !== "darwin" || architecture !== "arm64")
+    {
+        throw new HelperPlatformUnsupportedError(platform, architecture);
+    }
 }
 
 function requirePositiveInteger(value: number, name: string): void
@@ -258,6 +286,11 @@ export async function runHelper(
     const maxOutputBytes = options.maxOutputBytes ?? defaultHelperMaxOutputBytes;
     requirePositiveInteger(timeoutMs, "timeoutMs");
     requirePositiveInteger(maxOutputBytes, "maxOutputBytes");
+
+    if (options.helperPath === undefined)
+    {
+        assertSupportedHelperRuntime();
+    }
 
     const helperPath = resolveHelperPath(options.helperPath);
     const request = encodeProtocolRequest(operation, parameters);

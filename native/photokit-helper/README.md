@@ -133,6 +133,24 @@ does not establish publisher trust and should not be distributed. Set
 `PHOTOKIT_CODE_SIGN_IDENTITY` to an Apple Development or Developer ID identity
 for cryptographically stable development or distribution signing.
 
+## npm packaging
+
+`pnpm run native:package` builds an optimized arm64 helper, creates and signs
+the app bundle, synchronizes its short version with `packages/cli/package.json`,
+and stages the bundle plus its executable Launch Services wrapper under
+`packages/cli/native`. The staged directory is generated and intentionally not
+committed.
+
+The first npm artifact supports Apple Silicon Macs running macOS 13 or newer.
+The package declares `darwin` and `arm64`, and both Node and the packaged
+launcher produce explicit unsupported-platform diagnostics. A universal binary
+is deferred until both its arm64 and Intel slices can be exercised reliably.
+
+Use `pnpm run package:verify` to inspect the signed binary and dry-run tarball.
+Use `pnpm run package:smoke` to install a fresh tarball in a temporary directory
+and prove that the CLI discovers its packaged helper without an environment
+override or current-working-directory assumption.
+
 The first `authorization-request` for this identity shows the macOS Photos
 prompt. The choice persists for subsequent status and request commands. To
 change a denied choice, open System Settings > Privacy & Security > Photos.

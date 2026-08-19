@@ -5,6 +5,11 @@
 assets, write bounded thumbnails, and export current or original still-photo
 content.
 
+The npm package supports Apple Silicon Macs running macOS 13 or newer with
+Node.js 22 or newer. Its package metadata rejects Windows, Linux, and Intel Mac
+installs, while the runtime also returns `helper-platform-unsupported` if an
+unsupported default-helper invocation reaches it.
+
 ```text
 photokit-node authorization status [--json]
 photokit-node authorization request [--json]
@@ -22,8 +27,9 @@ Network retrieval and replacement are disabled by default. Thumbnail writes
 refuse an existing output unless `--overwrite` is present. Photo exports pass
 the same explicit collision policy to the native helper.
 
-Until native npm packaging is complete, repository development can point the
-CLI at its executable helper launcher:
+Repository development points the CLI at its executable source-tree launcher.
+Installed packages discover their bundled launcher automatically and do not
+need this variable:
 
 ```bash
 export PHOTOKIT_NODE_HELPER_PATH="$PWD/native/photokit-helper/scripts/run.sh"
@@ -43,3 +49,9 @@ Exit codes follow the native helper's sysexits-style contract:
 | 75 | Operation cancelled or timed out |
 | 77 | Photos authorization unavailable |
 | 78 | Incompatible protocol version |
+
+From the repository, `pnpm run native:package` stages the arm64 signed app and
+launcher. `pnpm run package:verify` checks the signature, architecture, bundle
+version, and `npm pack --dry-run` contents. `pnpm run package:smoke` installs a
+fresh tarball into a temporary directory and proves the installed CLI can find
+and launch its helper without cwd assumptions.

@@ -5,7 +5,7 @@ import { fileURLToPath } from "node:url";
 
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
-import { HelperNotExecutableError, HelperNotFoundError, resolveHelperPath, runHelper } from "../src/helper-runner";
+import { assertSupportedHelperRuntime, HelperNotExecutableError, HelperNotFoundError, HelperPlatformUnsupportedError, resolveHelperPath, runHelper } from "../src/helper-runner";
 import { IncompatibleProtocolVersionError, InvalidProtocolResponseError } from "../src/protocol";
 
 const fixtureSource = fileURLToPath(new URL("./fixtures/helper-fixture.mjs", import.meta.url));
@@ -31,6 +31,13 @@ describe("helper runner", () =>
     it("locates the packaged helper next to the core package", () =>
     {
         expect(resolveHelperPath()).toMatch(/packages\/core\/native\/photokit-helper$/);
+    });
+
+    it("rejects unsupported default-helper platforms and architectures explicitly", () =>
+    {
+        expect(() => assertSupportedHelperRuntime("linux", "x64")).toThrow(HelperPlatformUnsupportedError);
+        expect(() => assertSupportedHelperRuntime("darwin", "x64")).toThrow(HelperPlatformUnsupportedError);
+        expect(() => assertSupportedHelperRuntime("darwin", "arm64")).not.toThrow();
     });
 
     it("runs paths with spaces and preserves shell metacharacters as data", async () =>
