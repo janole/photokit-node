@@ -1,0 +1,8 @@
+{
+  "operation": "list-assets",
+  "parameters": {
+    "limit": 2,
+    "mediaType": "video"
+  },
+  "protocolVersion": 1
+}

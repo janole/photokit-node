@@ -21,12 +21,15 @@ describe("helper protocol", () =>
     {
         expect(JSON.parse(encodeProtocolRequest("version"))).toEqual(parseFixture("request-version"));
         expect(JSON.parse(encodeProtocolRequest("authorization-status"))).toEqual(parseFixture("request-authorization-status"));
+        expect(JSON.parse(encodeProtocolRequest("list-assets", { limit: 2, mediaType: "video" }))).toEqual(parseFixture("request-list-assets"));
     });
 
     it("decodes success fixtures", () =>
     {
         const version = decodeProtocolResponse(readFixture("response-version-success"));
         const authorization = decodeProtocolResponse(readFixture("response-authorization-status-success"));
+        const assets = decodeProtocolResponse(readFixture("response-assets-success"));
+        const emptyAssets = decodeProtocolResponse(readFixture("response-assets-empty"));
 
         expect(version).toMatchObject({
             data: { protocolVersion: helperProtocolVersion },
@@ -38,12 +41,29 @@ describe("helper protocol", () =>
             operation: "authorization-status",
             success: true,
         });
+        expect(assets).toMatchObject({
+            data: {
+                assets: [
+                    { localIdentifier: "video-local-id", mediaType: "video" },
+                    { duration: null, localIdentifier: "image-local-id", mediaType: "image" },
+                ],
+            },
+            operation: "list-assets",
+            success: true,
+        });
+        expect(emptyAssets).toEqual({
+            data: { assets: [] },
+            operation: "list-assets",
+            protocolVersion: helperProtocolVersion,
+            success: true,
+        });
     });
 
     it.each([
         ["response-invalid-request", "invalid-request"],
         ["response-unknown-operation", "unknown-operation"],
         ["response-incompatible-version", "incompatible-protocol-version"],
+        ["response-photo-library-access-unavailable", "photo-library-access-unavailable"],
     ])("decodes structured failure fixture %s", (name, code) =>
     {
         const response = decodeProtocolResponse(readFixture(name));

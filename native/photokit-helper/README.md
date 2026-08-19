@@ -17,6 +17,7 @@ pnpm run native:build
 pnpm run native:run -- '{"protocolVersion":1,"operation":"version","parameters":{}}'
 pnpm run native:run -- '{"protocolVersion":1,"operation":"authorization-status","parameters":{}}'
 pnpm run native:run -- '{"protocolVersion":1,"operation":"authorization-request","parameters":{}}'
+pnpm run native:run -- '{"protocolVersion":1,"operation":"list-assets","parameters":{"limit":20,"mediaType":"image"}}'
 ```
 
 Launch Services makes the helper the responsible application for macOS privacy
@@ -28,6 +29,31 @@ prompting. `authorization-request` prompts only when the status is
 `not-determined`; for resolved states it returns the existing status. Denied and
 restricted responses include guidance explaining why the helper cannot prompt
 again.
+
+## Recent asset metadata
+
+The `list-assets` operation returns recent image and video metadata, newest
+creation date first. Returned assets with equal dates are ordered by local
+identifier. Its parameters are:
+
+- `limit`: optional integer from 1 through 200; defaults to 20.
+- `mediaType`: optional `"image"` or `"video"`; omitting it includes both.
+
+The response includes the local identifier, media type and named subtype flags,
+nullable ISO-8601 creation/modification dates, dimensions, video duration,
+favorite state, and hidden state. Local identifiers are opaque handles scoped
+to the current photo library; do not persist them as cross-library asset IDs.
+
+The fetch uses `PHAsset` metadata only. It does not request thumbnails, image
+bytes, asset resources, or content-editing input, so iCloud originals are not
+downloaded. The helper asks PhotoKit to include hidden assets, but the system can
+still withhold them according to the user's hidden-album privacy setting.
+
+Listing succeeds for `authorized` and `limited` access (the latter returns only
+assets available to the app). Other authorization states return
+`photo-library-access-unavailable` with status details and exit code 77; the
+operation never prompts. An accessible library with no matching assets instead
+returns a successful response with an empty `assets` array.
 
 Successful responses use this envelope:
 
@@ -44,9 +70,10 @@ Successful responses use this envelope:
 
 Malformed requests, unknown operations, and incompatible versions return
 `success: false` with a stable `error.code`. Incompatible versions use exit code
-78; other request errors use exit code 64. Unexpected native failures use exit
-code 70. The response envelope itself always states the helper's protocol
-version so callers can diagnose mismatches explicitly.
+78; authorization failures use exit code 77; other request errors use exit code
+64. Unexpected native failures use exit code 70. The response envelope itself
+always states the helper's protocol version so callers can diagnose mismatches
+explicitly.
 
 ## Stable development identity
 

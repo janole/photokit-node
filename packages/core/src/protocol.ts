@@ -2,13 +2,14 @@
 export const helperProtocolVersion = 1;
 
 /** Operations supported by protocol version one. */
-export const protocolOperations = ["version", "authorization-status", "authorization-request"] as const;
+export const protocolOperations = ["version", "authorization-status", "authorization-request", "list-assets"] as const;
 
-/** Stable boundary-level errors returned by protocol version one. */
+/** Stable errors returned by protocol version one. */
 export const protocolErrorCodes = [
     "incompatible-protocol-version",
     "invalid-request",
     "native-failure",
+    "photo-library-access-unavailable",
     "unknown-operation",
 ] as const;
 
@@ -18,7 +19,7 @@ export type JsonValue = boolean | null | number | string | JsonValue[] | { [key:
 /** An operation supported by the current helper protocol. */
 export type ProtocolOperation = typeof protocolOperations[number];
 
-/** A stable boundary-level protocol error code. */
+/** A stable helper protocol error code. */
 export type ProtocolErrorCode = typeof protocolErrorCodes[number];
 
 /** Request passed to the native helper as one JSON argument. */
@@ -73,6 +74,40 @@ export interface AuthorizationStatusData
     canRequest: boolean;
     guidance: string;
     status: PhotoLibraryAuthorizationStatus;
+}
+
+/** Image and video media types exposed by the helper. */
+export type AssetMediaType = "image" | "video";
+
+/** Stable names for PhotoKit media-subtype flags. */
+export type AssetMediaSubtype = "photo-depth-effect" | "photo-hdr" | "photo-live" | "photo-panorama" | "photo-screenshot" | "spatial-media" | "video-cinematic" | "video-high-frame-rate" | "video-streamed" | "video-timelapse";
+
+/** Parameters accepted by the list-assets operation. */
+export interface ListAssetsParameters
+{
+    limit?: number;
+    mediaType?: AssetMediaType;
+}
+
+/** Metadata returned for one PhotoKit asset without requesting its content. */
+export interface AssetMetadata
+{
+    creationDate: string | null;
+    duration: number | null;
+    favorite: boolean;
+    hidden: boolean;
+    localIdentifier: string;
+    mediaSubtypes: AssetMediaSubtype[];
+    mediaType: AssetMediaType;
+    modificationDate: string | null;
+    pixelHeight: number;
+    pixelWidth: number;
+}
+
+/** Data returned by the list-assets operation. */
+export interface AssetListData
+{
+    assets: AssetMetadata[];
 }
 
 /** Indicates that a helper response does not match the protocol envelope. */

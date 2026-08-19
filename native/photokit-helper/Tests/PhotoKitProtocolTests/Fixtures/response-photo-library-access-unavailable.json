@@ -1,0 +1,12 @@
+{
+  "error": {
+    "code": "photo-library-access-unavailable",
+    "details": {
+      "status": "denied"
+    },
+    "message": "Enable Photos access in System Settings > Privacy & Security > Photos."
+  },
+  "operation": "list-assets",
+  "protocolVersion": 1,
+  "success": false
+}
