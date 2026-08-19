@@ -184,6 +184,8 @@ export interface AssetContentData
 /** Indicates that a helper response does not match the protocol envelope. */
 export class InvalidProtocolResponseError extends Error
 {
+    public readonly code = "invalid-native-response";
+
     public constructor(message: string, options?: ErrorOptions)
     {
         super(message, options);
@@ -194,6 +196,7 @@ export class InvalidProtocolResponseError extends Error
 /** Indicates that the native helper uses a different protocol version. */
 export class IncompatibleProtocolVersionError extends Error
 {
+    public readonly code = "incompatible-protocol-version";
     public readonly expected: number;
     public readonly received: number;
 
