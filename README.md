@@ -25,6 +25,7 @@ pnpm install
 pnpm run ok
 pnpm run native:build
 pnpm run native:run -- '{"protocolVersion":1,"operation":"authorization-status","parameters":{}}'
+pnpm run native:run -- '{"protocolVersion":1,"operation":"list-assets","parameters":{"limit":20,"mediaType":"image"}}'
 pnpm run native:test
 ```
 
@@ -41,9 +42,9 @@ pnpm dev -- protocol-version
 
 ## Status
 
-The native helper provides versioned JSON operations for protocol diagnostics
-and explicit Photos authorization status/request behavior. Asset access will be
-added behind the same boundary.
+The native helper provides versioned JSON operations for protocol diagnostics,
+explicit Photos authorization, and bounded recent image/video metadata listing.
+The Node process runner and public client will be added over the same boundary.
 
 ## License
 

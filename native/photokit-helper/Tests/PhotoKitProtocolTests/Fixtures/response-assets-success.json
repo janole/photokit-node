@@ -1,0 +1,37 @@
+{
+  "data": {
+    "assets": [
+      {
+        "creationDate": "2026-08-19T10:00:00Z",
+        "duration": 4.25,
+        "favorite": true,
+        "hidden": false,
+        "localIdentifier": "video-local-id",
+        "mediaSubtypes": [
+          "video-high-frame-rate"
+        ],
+        "mediaType": "video",
+        "modificationDate": "2026-08-19T10:05:00Z",
+        "pixelHeight": 1080,
+        "pixelWidth": 1920
+      },
+      {
+        "creationDate": null,
+        "duration": null,
+        "favorite": false,
+        "hidden": true,
+        "localIdentifier": "image-local-id",
+        "mediaSubtypes": [
+          "photo-screenshot"
+        ],
+        "mediaType": "image",
+        "modificationDate": null,
+        "pixelHeight": 3024,
+        "pixelWidth": 4032
+      }
+    ]
+  },
+  "operation": "list-assets",
+  "protocolVersion": 1,
+  "success": true
+}

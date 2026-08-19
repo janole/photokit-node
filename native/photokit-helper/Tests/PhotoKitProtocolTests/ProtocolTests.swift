@@ -58,6 +58,7 @@ private func fixtureData(_ name: String) throws -> Data
     ("response-invalid-request", ProtocolErrorCode.invalidRequest),
     ("response-unknown-operation", ProtocolErrorCode.unknownOperation),
     ("response-incompatible-version", ProtocolErrorCode.incompatibleProtocolVersion),
+    ("response-photo-library-access-unavailable", ProtocolErrorCode.photoLibraryAccessUnavailable),
 ])
 func failureResponsesMatchContractFixtures(name: String, code: ProtocolErrorCode) throws
 {

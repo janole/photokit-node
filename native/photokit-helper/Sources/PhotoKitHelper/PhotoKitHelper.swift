@@ -4,10 +4,12 @@ import PhotoKitProtocol
 private let exitSoftware: Int32 = 70
 private let exitUsage: Int32 = 64
 private let exitVersionMismatch: Int32 = 78
+private let exitNoPermission: Int32 = 77
 
 func writeJSON<T: Encodable>(_ value: T) throws
 {
     let encoder = JSONEncoder()
+    encoder.dateEncodingStrategy = .iso8601
     encoder.outputFormatting = [.sortedKeys]
     let data = try encoder.encode(value)
     FileHandle.standardOutput.write(data)
@@ -48,6 +50,23 @@ func requireEmptyParameters(_ request: ProtocolRequestEnvelope)
             code: .invalidRequest,
             message: "Operation \"\(request.operation)\" does not accept parameters.",
             exitCode: exitUsage
+        )
+    }
+}
+
+func requirePhotoLibraryAccess(operation: String)
+{
+    let status = currentAuthorizationStatus()
+
+    guard isPhotoLibraryReadAccessAvailable(status) else
+    {
+        let authorization = AuthorizationStatusData(status: status)
+        fail(
+            operation: operation,
+            code: .photoLibraryAccessUnavailable,
+            message: authorization.guidance,
+            details: ["status": .string(status.rawValue)],
+            exitCode: exitNoPermission
         )
     }
 }
@@ -130,6 +149,26 @@ struct PhotoKitHelper
                     operation: .authorizationRequest,
                     data: AuthorizationStatusData(status: status)
                 ))
+            case ProtocolOperation.listAssets.rawValue:
+                let parameters: ListAssetsParameters
+
+                do
+                {
+                    parameters = try ListAssetsParameters(parameters: request.parameters)
+                }
+                catch let error as InvalidListAssetsParametersError
+                {
+                    fail(
+                        operation: request.operation,
+                        code: .invalidRequest,
+                        message: error.message,
+                        exitCode: exitUsage
+                    )
+                }
+
+                requirePhotoLibraryAccess(operation: request.operation)
+                let data = listRecentAssets(parameters: parameters)
+                try writeJSON(ProtocolSuccessEnvelope(operation: .listAssets, data: data))
             default:
                 fail(
                     operation: request.operation,

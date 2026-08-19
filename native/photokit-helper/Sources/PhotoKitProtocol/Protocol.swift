@@ -9,15 +9,17 @@ public enum ProtocolOperation: String, Codable, Sendable
 {
     case authorizationRequest = "authorization-request"
     case authorizationStatus = "authorization-status"
+    case listAssets = "list-assets"
     case version
 }
 
-/// Stable boundary-level errors returned by the helper.
+/// Stable errors returned by the helper.
 public enum ProtocolErrorCode: String, Codable, Sendable
 {
     case incompatibleProtocolVersion = "incompatible-protocol-version"
     case invalidRequest = "invalid-request"
     case nativeFailure = "native-failure"
+    case photoLibraryAccessUnavailable = "photo-library-access-unavailable"
     case unknownOperation = "unknown-operation"
 }
 
