@@ -1,0 +1,10 @@
+{
+  "data": {
+    "canRequest": true,
+    "guidance": "Send an authorization-request operation to ask for Photos access.",
+    "status": "not-determined"
+  },
+  "operation": "authorization-status",
+  "protocolVersion": 1,
+  "success": true
+}

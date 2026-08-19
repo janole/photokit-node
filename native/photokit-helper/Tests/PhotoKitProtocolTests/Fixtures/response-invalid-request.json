@@ -1,0 +1,9 @@
+{
+  "error": {
+    "code": "invalid-request",
+    "message": "Request is not a valid protocol envelope."
+  },
+  "operation": null,
+  "protocolVersion": 1,
+  "success": false
+}

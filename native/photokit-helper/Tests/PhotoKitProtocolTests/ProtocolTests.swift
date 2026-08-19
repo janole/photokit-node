@@ -1,22 +1,99 @@
+import Foundation
 import Testing
 @testable import PhotoKitProtocol
 
-@Test func versionResponseUsesCurrentProtocolVersion()
+private func fixtureData(_ name: String) throws -> Data
 {
-    #expect(HelperVersionResponse().protocolVersion == helperProtocolVersion)
+    let url = try #require(Bundle.module.url(forResource: name, withExtension: "json"))
+    return try Data(contentsOf: url)
+}
+
+@Test func decodesVersionRequestContractFixture() throws
+{
+    let request = try JSONDecoder().decode(
+        ProtocolRequestEnvelope.self,
+        from: fixtureData("request-version")
+    )
+
+    #expect(request == ProtocolRequestEnvelope(operation: ProtocolOperation.version.rawValue))
+}
+
+@Test func decodesAuthorizationStatusRequestContractFixture() throws
+{
+    let request = try JSONDecoder().decode(
+        ProtocolRequestEnvelope.self,
+        from: fixtureData("request-authorization-status")
+    )
+
+    #expect(request.operation == ProtocolOperation.authorizationStatus.rawValue)
+    #expect(request.parameters.isEmpty)
+}
+
+@Test func versionSuccessMatchesContractFixture() throws
+{
+    let fixture = try JSONDecoder().decode(
+        ProtocolSuccessEnvelope<HelperVersionData>.self,
+        from: fixtureData("response-version-success")
+    )
+    let response = ProtocolSuccessEnvelope(operation: .version, data: HelperVersionData())
+
+    #expect(response == fixture)
+}
+
+@Test func authorizationSuccessMatchesContractFixture() throws
+{
+    let fixture = try JSONDecoder().decode(
+        ProtocolSuccessEnvelope<AuthorizationStatusData>.self,
+        from: fixtureData("response-authorization-status-success")
+    )
+    let response = ProtocolSuccessEnvelope(
+        operation: .authorizationStatus,
+        data: AuthorizationStatusData(status: .notDetermined)
+    )
+
+    #expect(response == fixture)
+}
+
+@Test(arguments: [
+    ("response-invalid-request", ProtocolErrorCode.invalidRequest),
+    ("response-unknown-operation", ProtocolErrorCode.unknownOperation),
+    ("response-incompatible-version", ProtocolErrorCode.incompatibleProtocolVersion),
+])
+func failureResponsesMatchContractFixtures(name: String, code: ProtocolErrorCode) throws
+{
+    let response = try JSONDecoder().decode(
+        ProtocolFailureEnvelope.self,
+        from: fixtureData(name)
+    )
+
+    #expect(!response.success)
+    #expect(response.error.code == code)
+}
+
+@Test func rejectsIncompatibleProtocolVersions() throws
+{
+    let response = try JSONDecoder().decode(
+        ProtocolSuccessEnvelope<HelperVersionData>.self,
+        from: fixtureData("response-future-version")
+    )
+
+    #expect(throws: IncompatibleProtocolVersionError.self)
+    {
+        try assertCompatibleProtocolVersion(response.protocolVersion)
+    }
 }
 
 @Test func authorizationResponseExplainsRequestableStatus()
 {
-    let response = AuthorizationStatusResponse(status: .notDetermined)
+    let response = AuthorizationStatusData(status: .notDetermined)
 
     #expect(response.canRequest)
-    #expect(response.guidance == "Run authorization-request to ask for Photos access.")
+    #expect(response.guidance == "Send an authorization-request operation to ask for Photos access.")
 }
 
 @Test func authorizationResponseMakesDeniedStatusActionable()
 {
-    let response = AuthorizationStatusResponse(status: .denied)
+    let response = AuthorizationStatusData(status: .denied)
 
     #expect(!response.canRequest)
     #expect(response.guidance.contains("System Settings"))

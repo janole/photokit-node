@@ -1,0 +1,9 @@
+{
+  "error": {
+    "code": "unknown-operation",
+    "message": "Unknown operation \"no-such-operation\"."
+  },
+  "operation": "no-such-operation",
+  "protocolVersion": 1,
+  "success": false
+}
