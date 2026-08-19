@@ -47,8 +47,8 @@ explicit Photos authorization, and bounded recent image/video metadata listing.
 The private Node process runner invokes that helper without a shell and enforces
 bounded output and execution time. The shared protocol now defines out-of-band
 thumbnail and still-photo export contracts, and the native helper renders
-bounded JPEG/PNG thumbnails for image and video assets. Still-photo export is
-the next native implementation slice, followed by the public client.
+bounded JPEG/PNG thumbnails for image and video assets and exports current or
+original still-photo content. The typed public client is the next slice.
 
 ## License
 
