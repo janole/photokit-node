@@ -310,53 +310,23 @@ func writeThumbnailData(
 {
     let outputURL = URL(fileURLWithPath: outputPath)
 
-    if fileManager.fileExists(atPath: outputURL.path), !overwrite
-    {
-        throw ThumbnailRenderingError.outputFileExists(path: outputURL.path)
-    }
-
-    let partialURL = outputURL
-        .deletingLastPathComponent()
-        .appendingPathComponent(".\(outputURL.lastPathComponent).\(UUID().uuidString).partial")
-
-    defer
-    {
-        try? fileManager.removeItem(at: partialURL)
-    }
-
     do
     {
-        try writePartial(data, partialURL)
-
-        if fileManager.fileExists(atPath: outputURL.path)
-        {
-            guard overwrite else
-            {
-                throw ThumbnailRenderingError.outputFileExists(path: outputURL.path)
-            }
-
-            _ = try fileManager.replaceItemAt(outputURL, withItemAt: partialURL)
-        }
-        else
-        {
-            try fileManager.moveItem(at: partialURL, to: outputURL)
-        }
-
-        let attributes = try fileManager.attributesOfItem(atPath: outputURL.path)
-        guard let byteLength = attributes[.size] as? NSNumber else
-        {
-            throw ThumbnailRenderingError.outputWriteFailed(path: outputURL.path)
-        }
-
-        return byteLength.intValue
+        return try writeAssetContentData(
+            data,
+            outputURL: outputURL,
+            overwrite: overwrite,
+            fileManager: fileManager,
+            writePartial: writePartial
+        )
     }
-    catch let error as ThumbnailRenderingError
+    catch AssetFileOutputError.fileExists(let path)
     {
-        throw error
+        throw ThumbnailRenderingError.outputFileExists(path: path)
     }
-    catch
+    catch AssetFileOutputError.writeFailed(let path)
     {
-        throw ThumbnailRenderingError.outputWriteFailed(path: outputURL.path)
+        throw ThumbnailRenderingError.outputWriteFailed(path: path)
     }
 }
 

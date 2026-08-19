@@ -147,6 +147,72 @@ func failThumbnail(operation: String, error: ThumbnailRenderingError) -> Never
     }
 }
 
+func failPhotoExport(operation: String, error: PhotoExportError) -> Never
+{
+    switch error
+    {
+    case .assetNotFound(let assetIdentifier):
+        fail(
+            operation: operation,
+            code: .assetNotFound,
+            message: "The requested asset is not visible or available to this photo library.",
+            details: ["assetIdentifier": .string(assetIdentifier)],
+            exitCode: exitNoInput
+        )
+    case .cancelled(let assetIdentifier):
+        fail(
+            operation: operation,
+            code: .operationCancelled,
+            message: "The asset-content operation was cancelled.",
+            details: ["assetIdentifier": .string(assetIdentifier)],
+            exitCode: exitTemporaryFailure
+        )
+    case .networkAccessRequired(let assetIdentifier):
+        fail(
+            operation: operation,
+            code: .networkAccessRequired,
+            message: "Asset content is not available locally; retry with allowNetworkAccess enabled.",
+            details: ["assetIdentifier": .string(assetIdentifier)],
+            exitCode: exitUnavailable
+        )
+    case .outputFileExists(let path):
+        fail(
+            operation: operation,
+            code: .outputFileExists,
+            message: "The output file already exists; enable overwrite to replace it.",
+            details: ["path": .string(path)],
+            exitCode: exitCannotCreate
+        )
+    case .outputWriteFailed(let path):
+        fail(
+            operation: operation,
+            code: .outputWriteFailed,
+            message: "The helper could not write the requested output file.",
+            details: ["path": .string(path)],
+            exitCode: exitCannotCreate
+        )
+    case .photoKitFailure(let assetIdentifier):
+        fail(
+            operation: operation,
+            code: .nativeFailure,
+            message: "PhotoKit could not produce the requested still-photo representation.",
+            details: ["assetIdentifier": .string(assetIdentifier)],
+            exitCode: exitSoftware
+        )
+    case .unsupportedMedia(let assetIdentifier, let mediaType):
+        fail(
+            operation: operation,
+            code: .unsupportedMedia,
+            message: "export-photo supports still-image content only.",
+            details: [
+                "assetIdentifier": .string(assetIdentifier),
+                "mediaType": .string(mediaType),
+            ],
+            exitCode: exitNoInput
+        )
+    }
+}
+
 @main
 struct PhotoKitHelper
 {
@@ -252,6 +318,34 @@ struct PhotoKitHelper
                 catch let error as ThumbnailRenderingError
                 {
                     failThumbnail(operation: request.operation, error: error)
+                }
+            case ProtocolOperation.exportPhoto.rawValue:
+                let parameters: ExportPhotoParameters
+
+                do
+                {
+                    parameters = try ExportPhotoParameters(parameters: request.parameters)
+                }
+                catch let error as InvalidAssetContentParametersError
+                {
+                    fail(
+                        operation: request.operation,
+                        code: .invalidRequest,
+                        message: error.message,
+                        exitCode: exitUsage
+                    )
+                }
+
+                requirePhotoLibraryAccess(operation: request.operation)
+
+                do
+                {
+                    let data = try await exportPhoto(parameters: parameters)
+                    try writeJSON(ProtocolSuccessEnvelope(operation: .exportPhoto, data: data))
+                }
+                catch let error as PhotoExportError
+                {
+                    failPhotoExport(operation: request.operation, error: error)
                 }
             case ProtocolOperation.listAssets.rawValue:
                 let parameters: ListAssetsParameters

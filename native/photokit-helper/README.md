@@ -19,6 +19,8 @@ pnpm run native:run -- '{"protocolVersion":1,"operation":"authorization-status",
 pnpm run native:run -- '{"protocolVersion":1,"operation":"authorization-request","parameters":{}}'
 pnpm run native:run -- '{"protocolVersion":1,"operation":"list-assets","parameters":{"limit":20,"mediaType":"image"}}'
 pnpm run native:run -- '{"protocolVersion":1,"operation":"get-thumbnail","parameters":{"assetIdentifier":"<local-identifier>","maxWidth":512,"maxHeight":512,"outputPath":"/tmp/photokit-thumbnail.jpg"}}'
+pnpm run native:run -- '{"protocolVersion":1,"operation":"export-photo","parameters":{"assetIdentifier":"<local-identifier>","destinationDirectory":"/tmp/photokit-exports","version":"current"}}'
+pnpm run native:run -- '{"protocolVersion":1,"operation":"export-photo","parameters":{"assetIdentifier":"<local-identifier>","destinationDirectory":"/tmp/photokit-exports","version":"original","allowNetworkAccess":true}}'
 ```
 
 Launch Services makes the helper the responsible application for macOS privacy
@@ -83,8 +85,21 @@ request, and output is placed atomically at the supplied path.
 Local-only access and collision refusal are the defaults. Set
 `allowNetworkAccess` to `true` to permit iCloud retrieval and `overwrite` to
 `true` to replace an existing output. Failed, cancelled, or interrupted writes
-remove partial files. The `export-photo` contract is defined, but current and
-original photo export behavior lands in its subsequent work item.
+remove partial files.
+
+`export-photo` supports image assets and the still component of Live Photos;
+video assets and Live Photo paired video are not exported. `current` requests
+the largest rendered representation from PhotoKit, so edits made in Photos are
+reflected. `original` copies the primary still-photo resource bytes without
+transcoding. The destination directory must already exist. Original exports
+preserve a safe original filename, while rendered exports append `-current`
+and use the returned content type's preferred extension.
+
+PhotoKit data is collected before filesystem placement begins. The completed
+bytes are then written to a unique partial file in the destination directory
+and atomically placed at the final path, so request cancellation, timeout, or
+PhotoKit failure cannot expose a partial destination. Existing files remain
+unchanged unless `overwrite` is explicitly enabled.
 
 Successful responses use this envelope:
 
