@@ -1,0 +1,12 @@
+{
+  "error": {
+    "code": "output-file-exists",
+    "details": {
+      "path": "/tmp/photokit-node/exports/IMG_0001.HEIC"
+    },
+    "message": "The output file already exists; enable overwrite to replace it."
+  },
+  "operation": "export-photo",
+  "protocolVersion": 1,
+  "success": false
+}

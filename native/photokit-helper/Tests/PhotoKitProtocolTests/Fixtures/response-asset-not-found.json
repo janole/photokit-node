@@ -1,0 +1,12 @@
+{
+  "error": {
+    "code": "asset-not-found",
+    "details": {
+      "assetIdentifier": "missing-image-id"
+    },
+    "message": "The requested asset is not visible or available to this photo library."
+  },
+  "operation": "export-photo",
+  "protocolVersion": 1,
+  "success": false
+}

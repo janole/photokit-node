@@ -4,11 +4,13 @@ import Photos
 /// Protocol version shared by the native helper and Node client.
 public let helperProtocolVersion = 1
 
-/// Operations supported by the current helper protocol.
+/// Operations defined by the current helper protocol.
 public enum ProtocolOperation: String, Codable, Sendable
 {
     case authorizationRequest = "authorization-request"
     case authorizationStatus = "authorization-status"
+    case exportPhoto = "export-photo"
+    case getThumbnail = "get-thumbnail"
     case listAssets = "list-assets"
     case version
 }
@@ -16,10 +18,16 @@ public enum ProtocolOperation: String, Codable, Sendable
 /// Stable errors returned by the helper.
 public enum ProtocolErrorCode: String, Codable, Sendable
 {
+    case assetNotFound = "asset-not-found"
     case incompatibleProtocolVersion = "incompatible-protocol-version"
     case invalidRequest = "invalid-request"
     case nativeFailure = "native-failure"
+    case networkAccessRequired = "network-access-required"
+    case operationCancelled = "operation-cancelled"
+    case outputFileExists = "output-file-exists"
+    case outputWriteFailed = "output-write-failed"
     case photoLibraryAccessUnavailable = "photo-library-access-unavailable"
+    case unsupportedMedia = "unsupported-media"
     case unknownOperation = "unknown-operation"
 }
 

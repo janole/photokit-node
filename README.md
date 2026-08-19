@@ -45,8 +45,9 @@ pnpm dev -- protocol-version
 The native helper provides versioned JSON operations for protocol diagnostics,
 explicit Photos authorization, and bounded recent image/video metadata listing.
 The private Node process runner invokes that helper without a shell and enforces
-bounded output and execution time. The public client will be added over the same
-boundary.
+bounded output and execution time. The shared protocol now defines out-of-band
+thumbnail and still-photo export contracts; native rendering and export are the
+next implementation slices, followed by the public client.
 
 ## License
 

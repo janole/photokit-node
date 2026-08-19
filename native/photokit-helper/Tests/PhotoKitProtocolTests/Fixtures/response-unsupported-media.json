@@ -1,0 +1,13 @@
+{
+  "error": {
+    "code": "unsupported-media",
+    "details": {
+      "assetIdentifier": "video-local-id",
+      "mediaType": "video"
+    },
+    "message": "export-photo supports still-image content only."
+  },
+  "operation": "export-photo",
+  "protocolVersion": 1,
+  "success": false
+}

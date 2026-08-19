@@ -1,0 +1,18 @@
+{
+  "data": {
+    "assetIdentifier": "image-local-id",
+    "file": {
+      "byteLength": 4281932,
+      "contentType": "image/heic",
+      "fileName": "IMG_0001.HEIC",
+      "path": "/tmp/photokit-node/exports/IMG_0001.HEIC",
+      "pixelHeight": 3024,
+      "pixelWidth": 4032,
+      "representation": "original",
+      "uniformTypeIdentifier": "public.heic"
+    }
+  },
+  "operation": "export-photo",
+  "protocolVersion": 1,
+  "success": true
+}

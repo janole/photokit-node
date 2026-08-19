@@ -1,0 +1,12 @@
+{
+  "error": {
+    "code": "network-access-required",
+    "details": {
+      "assetIdentifier": "cloud-image-id"
+    },
+    "message": "Asset content is not available locally; retry with allowNetworkAccess enabled."
+  },
+  "operation": "get-thumbnail",
+  "protocolVersion": 1,
+  "success": false
+}

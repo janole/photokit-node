@@ -1,0 +1,12 @@
+{
+  "error": {
+    "code": "output-write-failed",
+    "details": {
+      "path": "/tmp/photokit-node/exports/IMG_0001.HEIC"
+    },
+    "message": "The helper could not write the requested output file."
+  },
+  "operation": "export-photo",
+  "protocolVersion": 1,
+  "success": false
+}
