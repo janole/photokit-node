@@ -24,7 +24,7 @@ Requirements:
 pnpm install
 pnpm run ok
 pnpm run native:build
-pnpm run native:run -- authorization-status
+pnpm run native:run -- '{"protocolVersion":1,"operation":"authorization-status","parameters":{}}'
 pnpm run native:test
 ```
 
@@ -41,8 +41,9 @@ pnpm dev -- protocol-version
 
 ## Status
 
-The native helper provides protocol-version and explicit Photos authorization
-status/request operations. Asset access will be added behind the same boundary.
+The native helper provides versioned JSON operations for protocol diagnostics
+and explicit Photos authorization status/request behavior. Asset access will be
+added behind the same boundary.
 
 ## License
 

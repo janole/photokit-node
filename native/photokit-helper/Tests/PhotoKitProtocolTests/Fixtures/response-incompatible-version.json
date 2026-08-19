@@ -1,0 +1,13 @@
+{
+  "error": {
+    "code": "incompatible-protocol-version",
+    "details": {
+      "expected": 1,
+      "received": 2
+    },
+    "message": "Protocol version 2 is incompatible with version 1."
+  },
+  "operation": "version",
+  "protocolVersion": 1,
+  "success": false
+}

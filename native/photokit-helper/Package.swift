@@ -30,7 +30,10 @@ let package = Package(
         ),
         .testTarget(
             name: "PhotoKitProtocolTests",
-            dependencies: ["PhotoKitProtocol"]
+            dependencies: ["PhotoKitProtocol"],
+            resources: [
+                .process("Fixtures"),
+            ]
         ),
     ]
 )
