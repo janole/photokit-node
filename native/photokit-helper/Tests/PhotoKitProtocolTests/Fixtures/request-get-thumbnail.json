@@ -1,0 +1,14 @@
+{
+  "operation": "get-thumbnail",
+  "parameters": {
+    "allowNetworkAccess": false,
+    "assetIdentifier": "image-local-id",
+    "contentMode": "aspect-fill",
+    "format": "jpeg",
+    "maxHeight": 256,
+    "maxWidth": 384,
+    "outputPath": "/tmp/photokit-node/thumbnail.jpg",
+    "overwrite": false
+  },
+  "protocolVersion": 1
+}

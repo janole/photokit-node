@@ -1,0 +1,12 @@
+{
+  "error": {
+    "code": "operation-cancelled",
+    "details": {
+      "assetIdentifier": "image-local-id"
+    },
+    "message": "The asset-content operation was cancelled."
+  },
+  "operation": "get-thumbnail",
+  "protocolVersion": 1,
+  "success": false
+}

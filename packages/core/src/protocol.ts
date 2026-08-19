@@ -1,15 +1,28 @@
 /** Protocol version shared by the Node wrapper and native helper. */
 export const helperProtocolVersion = 1;
 
-/** Operations supported by protocol version one. */
-export const protocolOperations = ["version", "authorization-status", "authorization-request", "list-assets"] as const;
+/** Operations defined by protocol version one. */
+export const protocolOperations = [
+    "version",
+    "authorization-status",
+    "authorization-request",
+    "list-assets",
+    "get-thumbnail",
+    "export-photo",
+] as const;
 
 /** Stable errors returned by protocol version one. */
 export const protocolErrorCodes = [
+    "asset-not-found",
     "incompatible-protocol-version",
     "invalid-request",
     "native-failure",
+    "network-access-required",
+    "operation-cancelled",
+    "output-file-exists",
+    "output-write-failed",
     "photo-library-access-unavailable",
+    "unsupported-media",
     "unknown-operation",
 ] as const;
 
@@ -108,6 +121,64 @@ export interface AssetMetadata
 export interface AssetListData
 {
     assets: AssetMetadata[];
+}
+
+/** Maximum width or height accepted by the thumbnail contract. */
+export const maximumThumbnailDimension = 4_096;
+
+/** Crop behavior for a rendered thumbnail. */
+export type ThumbnailContentMode = "aspect-fill" | "aspect-fit";
+
+/** Encodings supported for rendered thumbnails. */
+export type ThumbnailFormat = "jpeg" | "png";
+
+/** Parameters accepted by the get-thumbnail operation. */
+export interface GetThumbnailParameters
+{
+    allowNetworkAccess?: boolean;
+    assetIdentifier: string;
+    contentMode?: ThumbnailContentMode;
+    format?: ThumbnailFormat;
+    maxHeight: number;
+    maxWidth: number;
+    outputPath: string;
+    overwrite?: boolean;
+}
+
+/** Still-photo representation selected for export. */
+export type PhotoExportVersion = "current" | "original";
+
+/** Parameters accepted by the export-photo operation. */
+export interface ExportPhotoParameters
+{
+    allowNetworkAccess?: boolean;
+    assetIdentifier: string;
+    destinationDirectory: string;
+    overwrite?: boolean;
+    version: PhotoExportVersion;
+}
+
+/** Kind of image content written by an asset-content operation. */
+export type AssetContentRepresentation = "current" | "original" | "thumbnail";
+
+/** File produced out of band by an asset-content operation. */
+export interface AssetContentFileDescriptor
+{
+    byteLength: number;
+    contentType: string;
+    fileName: string;
+    path: string;
+    pixelHeight: number | null;
+    pixelWidth: number | null;
+    representation: AssetContentRepresentation;
+    uniformTypeIdentifier: string;
+}
+
+/** Data returned by get-thumbnail and export-photo. */
+export interface AssetContentData
+{
+    assetIdentifier: string;
+    file: AssetContentFileDescriptor;
 }
 
 /** Indicates that a helper response does not match the protocol envelope. */

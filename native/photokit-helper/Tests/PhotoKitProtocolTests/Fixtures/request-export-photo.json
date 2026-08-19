@@ -1,0 +1,11 @@
+{
+  "operation": "export-photo",
+  "parameters": {
+    "allowNetworkAccess": true,
+    "assetIdentifier": "image-local-id",
+    "destinationDirectory": "/tmp/photokit-node/exports",
+    "overwrite": false,
+    "version": "original"
+  },
+  "protocolVersion": 1
+}

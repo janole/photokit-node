@@ -55,6 +55,28 @@ assets available to the app). Other authorization states return
 operation never prompts. An accessible library with no matching assets instead
 returns a successful response with an empty `assets` array.
 
+## Asset content transfer contract
+
+Protocol version 1 defines `get-thumbnail` and `export-photo` as out-of-band
+file operations. Their JSON responses describe the completed file—path,
+filename, byte length, content type, uniform type identifier, dimensions, and
+representation—but never contain image bytes or base64 data.
+
+Thumbnail requests accept absolute output paths, dimensions from 1 through
+4096 pixels, aspect-fit or aspect-fill content mode, and JPEG or PNG encoding.
+Photo exports accept an absolute destination directory and an explicit
+`current` or `original` representation. Both operations disable iCloud network
+access and output replacement by default; callers must opt in explicitly.
+
+Stable content failures distinguish missing assets, unsupported media, required
+network access, cancellation, existing output, and write failures. Process
+timeouts remain a typed Node runner failure because a terminated helper cannot
+write a final protocol response.
+
+The shared request, response, and error contracts are implemented and tested;
+native thumbnail rendering and photo export behavior land in the subsequent
+work items.
+
 Successful responses use this envelope:
 
 ```json
