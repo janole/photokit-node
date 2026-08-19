@@ -18,6 +18,7 @@ pnpm run native:run -- '{"protocolVersion":1,"operation":"version","parameters":
 pnpm run native:run -- '{"protocolVersion":1,"operation":"authorization-status","parameters":{}}'
 pnpm run native:run -- '{"protocolVersion":1,"operation":"authorization-request","parameters":{}}'
 pnpm run native:run -- '{"protocolVersion":1,"operation":"list-assets","parameters":{"limit":20,"mediaType":"image"}}'
+pnpm run native:run -- '{"protocolVersion":1,"operation":"get-thumbnail","parameters":{"assetIdentifier":"<local-identifier>","maxWidth":512,"maxHeight":512,"outputPath":"/tmp/photokit-thumbnail.jpg"}}'
 ```
 
 Launch Services makes the helper the responsible application for macOS privacy
@@ -73,9 +74,17 @@ network access, cancellation, existing output, and write failures. Process
 timeouts remain a typed Node runner failure because a terminated helper cannot
 write a final protocol response.
 
-The shared request, response, and error contracts are implemented and tested;
-native thumbnail rendering and photo export behavior land in the subsequent
-work items.
+`get-thumbnail` is implemented for image and video assets. It requests the
+current edited representation from PhotoKit with high-quality exact sizing,
+ignores degraded callbacks, renders aspect-fit or aspect-fill output, and
+encodes JPEG by default or PNG when requested. Dimensions are bounded by the
+request, and output is placed atomically at the supplied path.
+
+Local-only access and collision refusal are the defaults. Set
+`allowNetworkAccess` to `true` to permit iCloud retrieval and `overwrite` to
+`true` to replace an existing output. Failed, cancelled, or interrupted writes
+remove partial files. The `export-photo` contract is defined, but current and
+original photo export behavior lands in its subsequent work item.
 
 Successful responses use this envelope:
 
