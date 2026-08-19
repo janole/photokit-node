@@ -2,4 +2,4 @@
 
 import { runCli } from "./index";
 
-await runCli(process.argv);
+process.exitCode = await runCli(process.argv);

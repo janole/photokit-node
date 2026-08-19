@@ -37,8 +37,32 @@ signing.
 Run the TypeScript CLI directly during development:
 
 ```bash
-pnpm dev -- protocol-version
+export PHOTOKIT_NODE_HELPER_PATH="$PWD/native/photokit-helper/scripts/run.sh"
+pnpm dev authorization status
+pnpm dev assets list --limit 20 --media-type image
 ```
+
+## CLI
+
+The Commander-based CLI exposes the public client without adding PhotoKit logic
+of its own:
+
+```text
+photokit-node authorization status [--json]
+photokit-node authorization request [--json]
+photokit-node assets list [--limit 20] [--media-type image|video] [--json]
+photokit-node assets thumbnail <local-identifier> --output <path> --max-width <pixels> --max-height <pixels> [--format jpeg|png] [--content-mode aspect-fit|aspect-fill] [--allow-network] [--overwrite] [--json]
+photokit-node assets export <local-identifier> --output-directory <path> --version current|original [--allow-network] [--overwrite] [--json]
+photokit-node protocol-version
+```
+
+Output is human-readable by default. `--json` emits command-specific JSON and
+never embeds thumbnail bytes. Network retrieval and overwriting are disabled
+unless `--allow-network` or `--overwrite` is explicitly present. Stable exit
+codes distinguish usage (64), unavailable assets/media (66), unavailable
+helpers or network content (69), native failures (70), output failures (73),
+timeouts/cancellation (75), Photos authorization (77), and protocol mismatch
+(78). See `packages/cli/README.md` for the complete behavior.
 
 ## Node API
 
@@ -88,9 +112,10 @@ The private Node process runner invokes that helper without a shell and enforces
 bounded output and execution time. The shared protocol now defines out-of-band
 thumbnail and still-photo export contracts, and the native helper renders
 bounded JPEG/PNG thumbnails for image and video assets and exports current or
-original still-photo content. The typed public client now validates that native
-boundary and manages content ownership. CLI commands and native packaging are
-the next slices.
+original still-photo content. The typed public client validates that native
+boundary and manages content ownership, and the CLI exposes authorization,
+listing, thumbnail, and photo-export commands over that client. Native
+packaging is the next slice.
 
 ## License
 
