@@ -68,6 +68,11 @@ Local and CI packaging uses the stable ad-hoc development signature unless
 variable to its Developer ID identity and complete the corresponding Apple
 distribution/notarization process.
 
+The macOS native CI workflow is intentionally opt-in. Run it manually from the
+Actions tab, or add the `ci:native` label to a pull request. While that label is
+present, each new pull-request commit reruns native tests and package smoke
+coverage; superseded native runs are cancelled.
+
 Run the TypeScript CLI directly from a source checkout by pointing it at the
 development launcher:
 
