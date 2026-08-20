@@ -5,7 +5,7 @@ import { basename, dirname, join, resolve } from "node:path";
 import type { PhotoKitAsset, PhotoKitAuthorization, PhotoKitClientOptions, PhotoKitContentMetadata, PhotoKitExport, PhotoKitExportOptions, PhotoKitListAssetsOptions, PhotoKitThumbnail, PhotoKitThumbnailOptions } from "./client-types";
 import { PhotoKitError } from "./errors";
 import type { HelperRunnerOptions } from "./helper-runner";
-import { defaultHelperMaxOutputBytes, defaultHelperTimeoutMs, HelperCrashedError, HelperNotExecutableError, HelperNotFoundError, HelperOutputLimitError, HelperTimeoutError, runHelper } from "./helper-runner";
+import { defaultHelperMaxOutputBytes, defaultHelperTimeoutMs, HelperCrashedError, HelperNotExecutableError, HelperNotFoundError, HelperOutputLimitError, HelperPlatformUnsupportedError, HelperTimeoutError, runHelper } from "./helper-runner";
 import type { AssetContentData, JsonValue, ProtocolErrorCode, ProtocolOperation, ProtocolResponseEnvelope, ThumbnailContentMode, ThumbnailFormat } from "./protocol";
 import { IncompatibleProtocolVersionError, InvalidProtocolResponseError, maximumThumbnailDimension, protocolErrorCodes } from "./protocol";
 import { validateAssetContentData, validateAssetListData, validateAuthorizationStatusData, validateHelperVersionData } from "./validation";
@@ -501,6 +501,19 @@ export class PhotoKitClient
             if (error instanceof HelperOutputLimitError)
             {
                 throw new PhotoKitError(error.code, "The native PhotoKit helper response exceeded its safety limit.", { cause: error, operation });
+            }
+
+            if (error instanceof HelperPlatformUnsupportedError)
+            {
+                throw new PhotoKitError(error.code, error.message, {
+                    cause: error,
+                    details: {
+                        architecture: error.architecture,
+                        platform: error.platform,
+                        supported: "darwin-arm64",
+                    },
+                    operation,
+                });
             }
 
             if (error instanceof HelperCrashedError)

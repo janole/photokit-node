@@ -1,16 +1,21 @@
-name: CI
+name: Native CI
 
 on:
-  push:
-    branches: ["main"]
+  workflow_dispatch:
   pull_request:
+    types: [labeled, reopened, synchronize]
+
+concurrency:
+  group: native-ci-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 permissions:
   contents: read
 
 jobs:
-  node:
-    runs-on: ubuntu-latest
+  native:
+    if: github.event_name == 'workflow_dispatch' || contains(github.event.pull_request.labels.*.name, 'ci:native')
+    runs-on: macos-15
     timeout-minutes: 20
     steps:
       - name: Checkout
@@ -32,5 +37,8 @@ jobs:
       - name: Rebuild explicitly trusted native deps
         run: pnpm rebuild esbuild
 
-      - name: Run QA
-        run: pnpm qa
+      - name: Test Swift helper
+        run: pnpm native:test
+
+      - name: Verify and smoke installed npm package
+        run: pnpm package:smoke

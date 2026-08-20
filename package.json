@@ -15,9 +15,12 @@
     "lint": "eslint . --cache --cache-strategy content",
     "lint:fix": "eslint . --cache --cache-strategy content --fix",
     "native:build": "sh native/photokit-helper/scripts/build.sh",
+    "native:package": "sh native/photokit-helper/scripts/package.sh",
     "native:run": "sh native/photokit-helper/scripts/run.sh",
     "native:test": "swift test --package-path native/photokit-helper",
     "ok": "pnpm run build && pnpm run typecheck && pnpm run lint:fix && pnpm run test",
+    "package:smoke": "pnpm run package:verify && node scripts/smoke-installed-package.mjs",
+    "package:verify": "pnpm run build && pnpm run native:package && node scripts/verify-package.mjs",
     "qa": "pnpm run build && pnpm run typecheck && pnpm run lint && pnpm run test",
     "test": "pnpm -r test",
     "typecheck": "pnpm -r typecheck"

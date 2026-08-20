@@ -16,7 +16,8 @@ the native side of that boundary.
 
 Requirements:
 
-- macOS with Xcode Command Line Tools
+- Apple Silicon Mac running macOS 13 or newer
+- Xcode Command Line Tools
 - Node.js 22 or newer
 - pnpm 10.33.3
 
@@ -34,7 +35,46 @@ privacy description and signs it with a stable local-development identity. See
 `native/photokit-helper/README.md` for authorization behavior and distribution
 signing.
 
-Run the TypeScript CLI directly during development:
+## Native npm package
+
+The first packaged helper supports Apple Silicon (`darwin-arm64`) only. The npm
+package declares that operating-system and CPU contract, and the Node runner
+and packaged launcher also reject unsupported runtimes with an explicit
+`helper-platform-unsupported` diagnostic. Windows, Linux, and Intel Macs are
+not runtime targets for this release.
+
+Build and stage the signed release app inside the CLI package with one command:
+
+```bash
+pnpm run native:package
+```
+
+The package places an executable launcher and `PhotoKit Node Helper.app` under
+`packages/cli/native`. Installed code resolves that launcher relative to its
+own package, so it does not depend on the current working directory or
+`PHOTOKIT_NODE_HELPER_PATH`.
+
+Verify the compiled architecture, signature, bundle/npm version match, and
+`npm pack --dry-run` file list, or run that verification followed by a fresh
+temporary-install smoke test:
+
+```bash
+pnpm run package:verify
+pnpm run package:smoke
+```
+
+Local and CI packaging uses the stable ad-hoc development signature unless
+`PHOTOKIT_CODE_SIGN_IDENTITY` is set. A published release should set that
+variable to its Developer ID identity and complete the corresponding Apple
+distribution/notarization process.
+
+The macOS native CI workflow is intentionally opt-in. Run it manually from the
+Actions tab, or add the `ci:native` label to a pull request. While that label is
+present, each new pull-request commit reruns native tests and package smoke
+coverage; superseded native runs are cancelled.
+
+Run the TypeScript CLI directly from a source checkout by pointing it at the
+development launcher:
 
 ```bash
 export PHOTOKIT_NODE_HELPER_PATH="$PWD/native/photokit-helper/scripts/run.sh"
@@ -98,8 +138,8 @@ always removed after their bytes are read. Photo exports remain in the
 caller-owned destination and are never buffered into Node memory.
 
 During repository development, pass an absolute `helperPath` pointing to
-`native/photokit-helper/scripts/run.sh`. Installed-helper discovery is completed
-by the native packaging work item. Metadata and content deadlines are
+`native/photokit-helper/scripts/run.sh`. Installed clients resolve the bundled
+launcher relative to their own package. Metadata and content deadlines are
 independently configurable through `operationTimeoutMs`, `contentTimeoutMs`, or
 the per-content-operation `timeoutMs` option. iCloud retrieval and replacement
 remain disabled unless explicitly requested.
@@ -114,8 +154,9 @@ thumbnail and still-photo export contracts, and the native helper renders
 bounded JPEG/PNG thumbnails for image and video assets and exports current or
 original still-photo content. The typed public client validates that native
 boundary and manages content ownership, and the CLI exposes authorization,
-listing, thumbnail, and photo-export commands over that client. Native
-packaging is the next slice.
+listing, thumbnail, and photo-export commands over that client. The npm package
+bundles and self-discovers the signed arm64 helper. Final validation and
+documentation is the remaining slice.
 
 ## License
 
