@@ -73,14 +73,16 @@ Actions tab, or add the `ci:native` label to a pull request. While that label is
 present, each new pull-request commit reruns native tests and package smoke
 coverage; superseded native runs are cancelled.
 
-Run the TypeScript CLI directly from a source checkout by pointing it at the
-development launcher:
+Run the TypeScript CLI directly from a source checkout. The root development
+script points it at the source-tree launcher automatically:
 
 ```bash
-export PHOTOKIT_NODE_HELPER_PATH="$PWD/native/photokit-helper/scripts/run.sh"
 pnpm dev authorization status
 pnpm dev assets list --limit 20 --media-type image
 ```
+
+Set `PHOTOKIT_NODE_HELPER_PATH` only when you need to override that development
+default with another helper executable.
 
 ## CLI
 

@@ -11,7 +11,7 @@
   },
   "scripts": {
     "build": "pnpm -r build",
-    "dev": "tsx packages/cli/src/bin.ts",
+    "dev": "PHOTOKIT_NODE_HELPER_PATH=\"${PHOTOKIT_NODE_HELPER_PATH:-$PWD/native/photokit-helper/scripts/run.sh}\" tsx packages/cli/src/bin.ts",
     "lint": "eslint . --cache --cache-strategy content",
     "lint:fix": "eslint . --cache --cache-strategy content --fix",
     "native:build": "sh native/photokit-helper/scripts/build.sh",
