@@ -27,15 +27,17 @@ Network retrieval and replacement are disabled by default. Thumbnail writes
 refuse an existing output unless `--overwrite` is present. Photo exports pass
 the same explicit collision policy to the native helper.
 
-Repository development points the CLI at its executable source-tree launcher.
-Installed packages discover their bundled launcher automatically and do not
-need this variable:
+The root development script points the CLI at its executable source-tree
+launcher automatically. Installed packages discover their bundled launcher in
+the same way and need no environment variable:
 
 ```bash
-export PHOTOKIT_NODE_HELPER_PATH="$PWD/native/photokit-helper/scripts/run.sh"
 pnpm dev authorization status
 pnpm dev assets list --limit 20 --media-type image
 ```
+
+Set `PHOTOKIT_NODE_HELPER_PATH` only to override the root script's development
+default.
 
 Exit codes follow the native helper's sysexits-style contract:
 
