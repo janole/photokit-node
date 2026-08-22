@@ -116,6 +116,20 @@ else
         const outputPath = request.parameters.outputPath;
         recordOutput(outputPath);
 
+        if (mode === "malformed-thumbnail" || mode === "crashed-thumbnail")
+        {
+            writeFileSync(outputPath, "partial thumbnail");
+
+            if (mode === "malformed-thumbnail")
+            {
+                process.stdout.write("not-json\n");
+                break;
+            }
+
+            process.stderr.write("fixture crash\n");
+            process.exit(42);
+        }
+
         if (identifier === "delay")
         {
             await new Promise((resolve) => setTimeout(resolve, 5_000));

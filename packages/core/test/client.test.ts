@@ -174,6 +174,23 @@ describe("PhotoKitClient", () =>
         expect(existsSync(dirname(output?.outputPath ?? ""))).toBe(false);
     });
 
+    it.each([
+        ["malformed-thumbnail", "invalid-native-response"],
+        ["crashed-thumbnail", "helper-crashed"],
+    ])("cleans thumbnail directories after %s failures", async (mode, code) =>
+    {
+        setFixtureMode(mode);
+
+        await expect(client().getThumbnail("image-local-id", {
+            maxHeight: 64,
+            maxWidth: 64,
+        })).rejects.toMatchObject({ code });
+
+        const [output] = fixtureOutputs();
+        expect(output).toBeDefined();
+        expect(existsSync(dirname(output?.outputPath ?? ""))).toBe(false);
+    });
+
     it("returns validated caller-owned exports without buffering or deleting them", async () =>
     {
         const destinationDirectory = join(fixtureDirectory, "exports");
