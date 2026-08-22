@@ -84,6 +84,26 @@ pnpm dev assets list --limit 20 --media-type image
 Set `PHOTOKIT_NODE_HELPER_PATH` only when you need to override that development
 default with another helper executable.
 
+## Photo library behavior
+
+The signed helper owns the macOS Photos privacy prompt and reads the current
+System Photo Library only. It never mutates or deletes Photos assets. Listing
+returns bounded metadata without requesting image content or downloading
+iCloud originals. Local identifiers are opaque handles scoped to that library;
+they are not durable cross-library IDs.
+
+Thumbnail requests render the current image or video representation within the
+requested pixel bounds. Still-photo export supports `current`, which reflects
+the rendered representation visible in Photos, and `original`, which copies
+the primary still-photo resource without transcoding. Live Photos contribute
+their still component only; video export and paired motion remain unsupported.
+
+Content retrieval is local-only by default. `--allow-network` or
+`allowNetworkAccess: true` explicitly permits an iCloud download and can extend
+operation time. Thumbnail storage belongs to Node and is removed after the
+bytes are read. Export destinations and completed exports belong to the caller;
+existing files are preserved unless overwrite is explicitly enabled.
+
 ## CLI
 
 The Commander-based CLI exposes the public client without adding PhotoKit logic
@@ -146,6 +166,24 @@ independently configurable through `operationTimeoutMs`, `contentTimeoutMs`, or
 the per-content-operation `timeoutMs` option. iCloud retrieval and replacement
 remain disabled unless explicitly requested.
 
+## Validation and troubleshooting
+
+See [`docs/validation.md`](docs/validation.md) for the complete automated gate,
+real-library smoke procedure, cleanup-coverage map, and recorded baseline.
+
+Common diagnostics are actionable by design:
+
+- `helper-not-found` means an explicit helper override is wrong or an installed
+  package is incomplete. The root `pnpm dev` command needs no override.
+- `photo-library-access-unavailable` reports the current privacy state. Use
+  System Settings > Privacy & Security > Photos to recover from denial.
+- `network-access-required` means content is stored in iCloud; retry with
+  network access only when downloading it is acceptable.
+- `output-file-exists` preserves caller data. Choose another destination or opt
+  into overwrite explicitly.
+- `helper-platform-unsupported` means the packaged helper is running outside
+  its declared Apple Silicon macOS target.
+
 ## Status
 
 The native helper provides versioned JSON operations for protocol diagnostics,
@@ -157,8 +195,8 @@ bounded JPEG/PNG thumbnails for image and video assets and exports current or
 original still-photo content. The typed public client validates that native
 boundary and manages content ownership, and the CLI exposes authorization,
 listing, thumbnail, and photo-export commands over that client. The npm package
-bundles and self-discovers the signed arm64 helper. Final validation and
-documentation is the remaining slice.
+bundles and self-discovers the signed arm64 helper. Automated gates and the
+repeatable real-library validation procedure cover the complete first slice.
 
 ## License
 
