@@ -7,7 +7,7 @@ import { helperProtocolVersion, PhotoKitError } from "@photokit-node/core";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import type { CliPhotoKitClient } from "../src/index";
-import { runCli } from "../src/index";
+import { PhotoKitClient, runCli } from "../src/index";
 
 const authorization: PhotoKitAuthorization = {
     canRequest: false,
@@ -103,6 +103,11 @@ afterEach(() =>
 
 describe("photokit-node CLI", () =>
 {
+    it("exports the typed PhotoKit client from the public package", () =>
+    {
+        expect(new PhotoKitClient()).toBeInstanceOf(PhotoKitClient);
+    });
+
     it("preserves the protocol-version diagnostic", async () =>
     {
         const result = await execute(["protocol-version"]);

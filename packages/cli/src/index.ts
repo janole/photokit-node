@@ -7,6 +7,8 @@ import type { CliOutput } from "./output";
 import { cliExitCodes, exitCodeForError, writeAssets, writeAuthorization, writeCliError, writeExportResult, writeThumbnailResult } from "./output";
 import { placeThumbnail } from "./thumbnail-output";
 
+export * from "@photokit-node/core";
+
 /** PhotoKit client operations consumed by the thin CLI layer. */
 export interface CliPhotoKitClient
 {

@@ -2,6 +2,22 @@
 
 A macOS PhotoKit bridge with a typed Node.js API and CLI.
 
+## Install and use
+
+The npm package supports Apple Silicon Macs running macOS 13 or newer with
+Node.js 22 or newer. After a release is published, install it in a project and
+run its bundled CLI:
+
+```bash
+npm install photokit-node
+npx photokit-node authorization status
+```
+
+The installed package bundles and discovers its native helper automatically.
+See the [canonical installation and usage guide](packages/cli/README.md) for
+Photos authorization, CLI and typed Node quick starts, content ownership,
+iCloud access, output formats, and troubleshooting.
+
 ## Repository layout
 
 - `native/photokit-helper` contains the Swift executable that talks to PhotoKit.
@@ -128,10 +144,10 @@ timeouts/cancellation (75), Photos authorization (77), and protocol mismatch
 
 ## Node API
 
-`@photokit-node/core` exposes a typed, read-only client:
+`photokit-node` exposes a typed, read-only client:
 
 ```ts
-import { PhotoKitClient } from "@photokit-node/core";
+import { PhotoKitClient } from "photokit-node";
 
 const photos = new PhotoKitClient();
 await photos.requestAuthorization();
