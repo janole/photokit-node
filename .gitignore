@@ -12,5 +12,6 @@ coverage/
 .build/
 .swiftpm/
 
-# Generated npm-native artifact
+# Generated npm package artifacts
 packages/cli/native/
+packages/cli/skills/
