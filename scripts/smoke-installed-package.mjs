@@ -34,6 +34,20 @@ try
         tarballPath,
     ], { stdio: "pipe" });
 
+    const importResult = spawnSync(process.execPath, [
+        "--input-type=module",
+        "--eval",
+        "import { PhotoKitClient } from 'photokit-node'; if (typeof PhotoKitClient !== 'function') process.exit(1);",
+    ], {
+        cwd: installationDirectory,
+        encoding: "utf8",
+    });
+
+    if (importResult.status !== 0)
+    {
+        throw new Error(`Installed package did not export PhotoKitClient: ${importResult.stderr}`);
+    }
+
     const executable = join(installationDirectory, "node_modules", ".bin", "photokit-node");
     const environment = { ...process.env };
     delete environment.PHOTOKIT_NODE_HELPER_PATH;

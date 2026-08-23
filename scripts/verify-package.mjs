@@ -10,6 +10,7 @@ const appPath = join(nativeDirectory, "PhotoKit Node Helper.app");
 const binaryPath = join(appPath, "Contents", "MacOS", "photokit-helper");
 const launcherPath = join(nativeDirectory, "photokit-helper");
 const packageJson = JSON.parse(readFileSync(join(packageDirectory, "package.json"), "utf8"));
+const publicDeclarations = readFileSync(join(packageDirectory, "dist", "index.d.ts"), "utf8");
 
 function requireCondition(condition, message)
 {
@@ -24,6 +25,8 @@ requireCondition(process.arch === "arm64", `Package verification requires arm64,
 requireCondition(packageJson.os?.length === 1 && packageJson.os[0] === "darwin", "Package metadata must declare darwin only.");
 requireCondition(packageJson.cpu?.length === 1 && packageJson.cpu[0] === "arm64", "Package metadata must declare arm64 only.");
 requireCondition((statSync(launcherPath).mode & 0o111) !== 0, "Packaged helper launcher must be executable.");
+requireCondition(publicDeclarations.includes("declare class PhotoKitClient"), "Public declarations must export PhotoKitClient.");
+requireCondition(!publicDeclarations.includes("@photokit-node/core"), "Public declarations must not depend on the private core package.");
 
 const architectures = execFileSync("lipo", ["-archs", binaryPath], { encoding: "utf8" }).trim();
 requireCondition(architectures === "arm64", `Packaged helper must contain only arm64, received ${architectures}.`);
