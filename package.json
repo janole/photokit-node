@@ -20,8 +20,7 @@
     "native:test": "swift test --package-path native/photokit-helper",
     "ok": "pnpm run build && pnpm run typecheck && pnpm run lint:fix && pnpm run test",
     "package:smoke": "pnpm run package:verify && node scripts/smoke-installed-package.mjs",
-    "package:stage": "pnpm run native:package && node scripts/stage-package-skill.mjs",
-    "package:verify": "pnpm run build && pnpm run package:stage && node scripts/verify-package.mjs",
+    "package:verify": "pnpm run build && pnpm run native:package && node scripts/verify-package.mjs",
     "qa": "pnpm run build && pnpm run typecheck && pnpm run lint && pnpm run test",
     "test": "pnpm -r test",
     "typecheck": "pnpm -r typecheck"

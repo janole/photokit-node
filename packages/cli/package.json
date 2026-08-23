@@ -13,7 +13,6 @@
   "files": [
     "dist",
     "native",
-    "skills",
     "LICENSE",
     "README.md"
   ],
@@ -43,7 +42,7 @@
     "test": "vitest run --passWithNoTests",
     "typecheck": "tsc --noEmit",
     "prepublishOnly": "pnpm --workspace-root run package:verify",
-    "prepack": "pnpm -r build && pnpm --workspace-root run package:stage"
+    "prepack": "pnpm -r build && pnpm --workspace-root run native:package"
   },
   "dependencies": {
     "commander": "15.0.0"
