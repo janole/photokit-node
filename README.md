@@ -23,6 +23,8 @@ iCloud access, output formats, and troubleshooting.
 - `native/photokit-helper` contains the Swift executable that talks to PhotoKit.
 - `packages/core` contains the typed Node.js wrapper and protocol definitions.
 - `packages/cli` contains the thin `photokit-node` command-line interface.
+- `skills/photokit-node` contains the portable operational skill discoverable
+  by the open agent skills CLI.
 
 The native helper and Node wrapper communicate through a versioned JSON
 protocol. Photo library permission prompts and iCloud asset retrieval remain on
